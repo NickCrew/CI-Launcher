@@ -47,6 +47,12 @@ shutil.copy(src_img, vm_path)
 # create the temp working dir. assuming the repo was cloned you have a
 # templates/ folder with user-data and meta-data files
 tmp_drive = '/tmp/drives/latest'
+
+if os.path.isdir(tmp_drive) is True:
+    shutil.rmtree(tmp_drive)
+else:
+    pass
+
 os.makedirs(tmp_drive)
 templates_dir = dir_path + '/templates'
 shutil.copy(templates_dir + '/meta-data', tmp_drive)
@@ -84,5 +90,4 @@ logging.info(vm_name + "- VM launched")
 
 # Cleanup. Eject cdrom, delete tmp folders and iso
 subprocess.call(['virsh change-media', vm_name + ' hda --eject'])
-shutil.rmtree(tmp_drive)
 os.remove(iso_path)
