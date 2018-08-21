@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 """
 Automated deployment of virtual machines using cloud-config
 
@@ -33,7 +34,7 @@ else:
 
 vm_name = str(args.hostname)
 vm_ram = str(args.memory)
-vm_path = dir_path + '/' + vm_name + '.img'
+vm_path = dir_path + '/os/' + vm_name + '.img'
 
 # copy the new virtual disk we will install to
 shutil.copy(src_img, vm_path)
@@ -56,7 +57,9 @@ with open(tmp_drive + '/meta-data', 'r') as file:
 
 # Generate the configuration iso
 logging.info(vm_name + "- Generating iso")
-subprocess.call(['genisoimage', '-volid', 'cidata', '-joliet', '-rock', '-input-charset', 'iso8859-1', '-output', vm_name + '-cidata.iso', tmp_drive + '/user-data', tmp_drive + '/meta-data'])
+iso_path = dir_path + '/os/' + vm_name + '-cidata.iso'
+subprocess.call(['genisoimage', '-volid', 'cidata', '-joliet', '-rock',
+'-input-charset', 'iso8859-1', '-output', iso_path, tmp_drive + '/user-data', tmp_drive + '/meta-data'])
 
 # Install and launch the VM
 logging.info(vm_name + ": virt-install")
@@ -69,12 +72,12 @@ vinst_cmd.extend(['--network=default,model=virtio'])
 vinst_cmd.extend(['--vnc'])
 vinst_cmd.extend(['--noautoconsole'])
 vinst_cmd.extend(['--disk', vm_path + ',format=qcow2,bus=virtio'])
-vinst_cmd.extend(['--disk', 'path=' + dir_path + '/' + vm_name + '-cidata.iso' + ',device=cdrom'])
+vinst_cmd.extend(['--disk', 'path=' + dir_path + '/os/' + vm_name + '-cidata.iso' + ',device=cdrom'])
 subprocess.call(vinst_cmd)
 
 logging.info(vm_name + "- VM launched")
 
 # Cleanup. Eject cdrom, delete tmp folders and iso
-subprocess.call(['virsh change-media', vm_name + ' hda --eject --config'])
+subprocess.call(['virsh change-media', vm_name + ' hda --eject'])
 shutil.rmtree(tmp_drive)
-os.remove(dir_path + '/' + vm_name + '-cidata.iso')
+os.remove(iso_path)
