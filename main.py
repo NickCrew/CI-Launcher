@@ -26,7 +26,6 @@ logging.basicConfig(format='%(levelname)s: %(messages)s', level=logging.DEBUG)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 distro = str(args.distro)
-
 src_img = dir_path + '/' + distro + '.img'
 
 if distro == 'ubuntu':
@@ -48,6 +47,8 @@ else:
 
 vm_name = str(args.hostname)
 vm_ram = str(args.memory)
+
+# new vm will go in the os/ directory
 vm_path = dir_path + '/os/' + vm_name + '.img'
 
 # copy the new virtual disk we will install to
@@ -68,7 +69,6 @@ shutil.copy(templates_dir + '/meta-data', tmp_drive)
 shutil.copy(templates_dir + '/user-data', tmp_drive)
 
 # Create a meta-data file with the desired hostname
-logging.info(vm_name + "- Generating cloud-config")
 with open(tmp_drive + '/meta-data', 'r') as file:
     filedata = file.read()
     filedata = filedata.replace('@@HOSTNAME@@', vm_name)
@@ -76,13 +76,11 @@ with open(tmp_drive + '/meta-data', 'r') as file:
         file.write(filedata)
 
 # Generate the configuration iso
-logging.info(vm_name + "- Generating iso")
 iso_path = dir_path + '/os/' + vm_name + '-cidata.iso'
 subprocess.call(['genisoimage', '-volid', 'cidata', '-joliet', '-rock',
 '-input-charset', 'iso8859-1', '-output', iso_path, tmp_drive + '/user-data', tmp_drive + '/meta-data'])
 
 # Install and launch the VM
-logging.info(vm_name + ": virt-install")
 vinst_cmd = []
 vinst_cmd.extend(['virt-install', '--import'])
 vinst_cmd.extend(['--name', vm_name])
@@ -95,7 +93,6 @@ vinst_cmd.extend(['--disk', vm_path + ',format=qcow2,bus=virtio'])
 vinst_cmd.extend(['--disk', 'path=' + dir_path + '/os/' + vm_name + '-cidata.iso' + ',device=cdrom'])
 subprocess.call(vinst_cmd)
 
-logging.info(vm_name + "- VM launched")
 
 # Cleanup. Eject cdrom, delete tmp folders and iso
 #subprocess.call(['virsh change-media', vm_name + ' hda --eject'])
