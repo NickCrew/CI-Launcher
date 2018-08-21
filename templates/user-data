@@ -1,0 +1,10 @@
+#cloud-config
+chpasswd: { expire: False }
+password: password
+ssh_authorized_keys:
+- ssh-rsa YOUR PUB KEY HERE
+
+package_update: true
+runcmd:
+  - apt-get remove -y cloud-init 
+
