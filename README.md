@@ -21,4 +21,4 @@ ci-launcher/
     └── user-data
 ```
  
-Place your cloud images in the "os" directory 
+Place your cloud images in the root directory 

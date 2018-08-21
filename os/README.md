@@ -1,1 +1,1 @@
-Place you cloud image files in this directory.
+This is where your new VM images will live.
