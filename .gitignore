@@ -2,6 +2,7 @@
 os/*.img
 os/*.raw
 os/*.qcow2
+os/*.iso
 *img
 *raw
 *.qcow2
