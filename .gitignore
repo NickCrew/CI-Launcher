@@ -1,0 +1,4 @@
+.DS_Store
+os/*.img
+os/*.raw
+os/*.qcow2
