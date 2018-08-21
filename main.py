@@ -75,6 +75,17 @@ with open(tmp_drive + '/meta-data', 'r') as file:
     with open(tmp_drive + '/meta-data', 'w') as file:
         file.write(filedata)
 
+# import the user's ssh key
+home_dir = os.path.expanderuser('~')
+key_file = home_dir + '/.ssh/id_rsa.pub'
+user_data = tmp_drive + '/user_data'
+
+with open(key_file, 'r') as file:
+    filedata = file.read()
+    filedata = filedata.replace('@@SSH_KEY@@', filedata)
+    with open(user_data, 'w') as file:
+        file.write(filedata)
+
 # Generate the configuration iso
 iso_path = dir_path + '/os/' + vm_name + '-cidata.iso'
 subprocess.call(['genisoimage', '-volid', 'cidata', '-joliet', '-rock',
