@@ -2,7 +2,7 @@
 chpasswd: { expire: False }
 password: password
 ssh_authorized_keys:
-- ssh-rsa YOUR PUB KEY HERE
+- ssh-rsa @@SSH_KEY@@
 
 package_update: true
 runcmd:

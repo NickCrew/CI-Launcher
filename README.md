@@ -9,7 +9,8 @@ Defaults:
 `--memory` 1024  
 `--distro` ubuntu  
 
-1. Put your ssh public keys in the user-data file in templates/ 
+1. The script will auto import your user's .ssh/id_rsa.pub key (if this does
+   not exist `ssh-keygen -t rsa`)
 2. Default CI username is `ubuntu`, change the password in templates/user-data
 3. The script will download the latest Ubuntu Bionic cloud image if one is not present
 4. Deploys to the libvirt default network unless the `--network` *virt-install* option is changed
