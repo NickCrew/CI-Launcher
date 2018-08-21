@@ -13,7 +13,7 @@ import subprocess
 import errno
 import socket
 import logging
-
+import urllib.request
 
 parser = argparse.ArgumentParser(description='Launch a VM with cloud-init')
 parser.add_argument('--hostname', help='Hostname for new vm')
@@ -30,7 +30,12 @@ fcheck = os.path.isfile(src_img)
 if fcheck is True:
     pass
 else:
-    print('You need to retrieve the cloud image!')
+    print('We need to download the cloud image. One moment please.')
+    url = 'https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img'
+    fileName = src_img
+    with urllib.request.urlopen(url) as response, open(fileName, 'wb') as out_file:
+        shutil.copyfileobj(response, out_file)
+    print('Cloud image obtained.')
 
 vm_name = str(args.hostname)
 vm_ram = str(args.memory)
