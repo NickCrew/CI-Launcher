@@ -6,5 +6,5 @@ ssh_authorized_keys:
 
 package_update: true
 runcmd:
-  - apt-get remove -y cloud-init 
+  - sudo touch /etc/cloud/cloud-init.disabled
 

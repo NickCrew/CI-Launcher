@@ -17,13 +17,23 @@ import urllib.request
 
 parser = argparse.ArgumentParser(description='Launch a VM with cloud-init')
 parser.add_argument('--hostname', help='Hostname for new vm')
-parser.add_argument('--memory', help='Specify memory in MBs')
+parser.add_argument('--memory', default='1024', help='Specify memory in MBs')
+parser.add_argument('--distro', type = str.lower, default='ubuntu', choices =
+        ['ubuntu', 'fedora'], help='Choose Ubuntu or Fedora')
 args = parser.parse_args()
 
 logging.basicConfig(format='%(levelname)s: %(messages)s', level=logging.DEBUG)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-src_img = dir_path + '/bionic.img'
+distro = str(args.distro)
+
+src_img = dir_path + '/' + distro + '.img'
+
+if distro == 'ubuntu':
+    url = 'https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img'
+else:
+    url = 'https://download.fedoraproject.org/pub/fedora/linux/releases/28/Cloud/x86_64/images/Fedora-Cloud-Base-28-1.1.x86_64.qcow2'
+
 
 # Make sure we have an Ubuntu cloud image, download latest if not
 fcheck = os.path.isfile(src_img)
@@ -31,7 +41,6 @@ if fcheck is True:
     pass
 else:
     print('We need to download the cloud image. One moment please.')
-    url = 'https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img'
     fileName = src_img
     with urllib.request.urlopen(url) as response, open(fileName, 'wb') as out_file:
         shutil.copyfileobj(response, out_file)
@@ -89,5 +98,5 @@ subprocess.call(vinst_cmd)
 logging.info(vm_name + "- VM launched")
 
 # Cleanup. Eject cdrom, delete tmp folders and iso
-subprocess.call(['virsh change-media', vm_name + ' hda --eject'])
-os.remove(iso_path)
+#subprocess.call(['virsh change-media', vm_name + ' hda --eject'])
+#os.remove(iso_path)
