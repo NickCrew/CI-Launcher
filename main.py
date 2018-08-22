@@ -20,18 +20,24 @@ parser.add_argument('--hostname', help='Hostname for new vm')
 parser.add_argument('--memory', default='1024', help='Specify memory in MBs')
 parser.add_argument('--distro', type = str.lower, default='ubuntu', choices =
         ['ubuntu', 'fedora'], help='Choose Ubuntu or Fedora')
+parser.add_argument('--use-ssh_key', type = str.lower, default='y', choices
+                    = ['y', 'n'] help='Choose y to import id_rsa.pub from
+                    ~/.ssh')
 args = parser.parse_args()
 
 logging.basicConfig(format='%(levelname)s: %(messages)s', level=logging.DEBUG)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 distro = str(args.distro)
+ssh_import = str(args.use-ssh-key)
 src_img = dir_path + '/' + distro + '.img'
 
 if distro == 'ubuntu':
     url = 'https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-amd64.img'
+    vm_vari = "ubuntu16.04"
 else:
     url = 'https://download.fedoraproject.org/pub/fedora/linux/releases/28/Cloud/x86_64/images/Fedora-Cloud-Base-28-1.1.x86_64.qcow2'
+    vm_vari = "fedora27"
 
 
 # Make sure we have an Ubuntu cloud image, download latest if not
@@ -76,27 +82,31 @@ with open(tmp_drive + '/meta-data', 'r') as file:
         file.write(filedata)
 
 # import the user's ssh key
-home_dir = os.path.expanderuser('~')
-key_file = home_dir + '/.ssh/id_rsa.pub'
-user_data = tmp_drive + '/user_data'
+if ssh_import == 'y':
+    home_dir = os.path.expanderuser('~')
+    key_file = home_dir + '/.ssh/id_rsa.pub'
+    user_data = tmp_drive + '/user_data'
 
-with open(key_file, 'r') as file:
-    filedata = file.read()
-    filedata = filedata.replace('@@SSH_KEY@@', filedata)
-    with open(user_data, 'w') as file:
-        file.write(filedata)
+    with open(key_file, 'r') as file:
+        filedata = file.read()
+        filedata = filedata.replace('@@SSH_KEY@@', filedata)
+        with open(user_data, 'w') as file:
+            file.write(filedata)
+else:
+    pass
 
 # Generate the configuration iso
 iso_path = dir_path + '/os/' + vm_name + '-cidata.iso'
 subprocess.call(['genisoimage', '-volid', 'cidata', '-joliet', '-rock',
 '-input-charset', 'iso8859-1', '-output', iso_path, tmp_drive + '/user-data', tmp_drive + '/meta-data'])
 
+
 # Install and launch the VM
 vinst_cmd = []
 vinst_cmd.extend(['virt-install', '--import'])
 vinst_cmd.extend(['--name', vm_name])
 vinst_cmd.extend(['--vcpus', '1', '--memory', vm_ram])
-vinst_cmd.extend(['--os-type=linux', '--os-variant=ubuntu16.04'])
+vinst_cmd.extend(['--os-type=linux', '--os-variant=' + vm_vari])
 vinst_cmd.extend(['--network=default,model=virtio'])
 vinst_cmd.extend(['--vnc'])
 vinst_cmd.extend(['--noautoconsole'])
