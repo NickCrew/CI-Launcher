@@ -20,16 +20,15 @@ parser.add_argument('--hostname', help='Hostname for new vm')
 parser.add_argument('--memory', default='1024', help='Specify memory in MBs')
 parser.add_argument('--distro', type = str.lower, default='ubuntu', choices =
         ['ubuntu', 'fedora'], help='Choose Ubuntu or Fedora')
-parser.add_argument('--use-ssh_key', type = str.lower, default='y', choices
-                    = ['y', 'n'] help='Choose y to import id_rsa.pub from
-                    ~/.ssh')
+parser.add_argument('--sshkey', type = str.lower, default='y', choices
+                    = ['y', 'n'], help='Choose y to import id_rsa.pub from ~/.ssh')
 args = parser.parse_args()
 
 logging.basicConfig(format='%(levelname)s: %(messages)s', level=logging.DEBUG)
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 distro = str(args.distro)
-ssh_import = str(args.use-ssh-key)
+ssh_import = str(args.sshkey)
 src_img = dir_path + '/' + distro + '.img'
 
 if distro == 'ubuntu':
@@ -83,7 +82,7 @@ with open(tmp_drive + '/meta-data', 'r') as file:
 
 # import the user's ssh key
 if ssh_import == 'y':
-    home_dir = os.path.expanderuser('~')
+    home_dir = os.path.expanduser('~')
     key_file = home_dir + '/.ssh/id_rsa.pub'
     user_data = tmp_drive + '/user_data'
 
