@@ -15,14 +15,10 @@ import socket
 import logging
 import urllib.request
 
-parser = argparse.ArgumentParser(description='Launch a VM with cloud-init.
-                                 Ubuntu Bionic or Fedora 28.')
+parser = argparse.ArgumentParser(description='Launch a VM with cloud-init. Ubuntu Bionic or Fedora 28.')
 parser.add_argument('--hostname', help='Hostname for your new VM.')
-parser.add_argument('--memory', default='1024', help='Specify memory in MBs.
-                    Default is 1024.')
-parser.add_argument('--distro', type=str.lower, default='ubuntu',
-                    choices=['ubuntu', 'fedora'], help='Choose Ubuntu or
-                    Fedora. Default is ubuntu.')
+parser.add_argument('--memory', default='1024', help='Specify memory in MBs. Default is 1024.')
+parser.add_argument('--distro', type=str.lower, default='ubuntu', choices=['ubuntu', 'fedora'], help='Choose Ubuntu or Fedora. Default is ubuntu.')
 args = parser.parse_args()
 
 logging.basicConfig(format='%(levelname)s: %(messages)s', level=logging.DEBUG)
