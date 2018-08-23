@@ -8,11 +8,21 @@ or libvirt installation. It will automatically retrieve the latest cloud image i
 ## Instructions
 
 __Usage:__  
-`python3 main.py --hostname bionic-2 --memory 1024 --distro ubuntu --use-ssh-key y/n`
+`./main.py --hostname bionic-2 --memory 1024 --distro ubuntu --use-ssh-key y/n`
 
-Defaults:  
-`--memory` 1024  
-`--distro` ubuntu  
+```bash
+usage: launch.py [-h] [--hostname HOSTNAME] [--memory MEMORY]
+                 [--distro {ubuntu,fedora}]
+
+Launch a VM with cloud-init. Ubuntu Bionic or Fedora 28.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --hostname HOSTNAME   Hostname for your new VM.
+  --memory MEMORY       Specify memory in MBs. Default is 1024.
+  --distro {ubuntu,fedora}
+                        Choose Ubuntu or Fedora. Default is ubuntu.
+```
 
 1. Place the ssh key you wish to use in the user-data file where indicated 
 2. Default CI username is `ubuntu` or `fedora`, change the password in templates/user-data
@@ -20,7 +30,6 @@ Defaults:
 4. Deploys to the libvirt default network unless the `--network` *virt-install* option is changed
 5. If the required cloud image is not present it will be downloaded. 
 
-or use the user-data password to log-in*  
 
 __The default user-data password is "password".__  
 
